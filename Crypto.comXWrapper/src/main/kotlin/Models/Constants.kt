@@ -1,5 +1,7 @@
 package Models
 
+import Exceptions.CoinSymbolNotFoundException
+
 enum class CoinSymbol(val str:String) {
     CRO("cro"),
     BTC("btc"),
@@ -16,5 +18,17 @@ enum class CoinSymbol(val str:String) {
     VET("vet"),
     ICX("icx"),
     USDT("usdt"),
-    USDC("usdc")
+    USDC("usdc"),
+    ADA("ada")
 }
+
+fun stringToCoinSymbol(str:String) : CoinSymbol{
+    var str = str.toLowerCase()
+    val x = CoinSymbol.values().find { it.str == str }
+    if (x==null) {
+        throw CoinSymbolNotFoundException(str)
+    }
+    return x
+}
+
+data class TradePair(val countCoin:CoinSymbol, val baseCoin:CoinSymbol)
