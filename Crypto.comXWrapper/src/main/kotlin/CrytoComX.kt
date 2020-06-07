@@ -1,0 +1,6 @@
+class CrytoComX {
+
+    companion object {
+        
+    }
+}
