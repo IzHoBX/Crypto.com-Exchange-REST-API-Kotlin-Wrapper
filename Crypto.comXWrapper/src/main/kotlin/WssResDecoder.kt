@@ -1,9 +1,5 @@
 import com.tinder.scarlet.Message
-import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.WebSocket
-import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
-import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
-import okhttp3.OkHttpClient
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
@@ -13,6 +9,7 @@ import java.util.zip.GZIPInputStream
 
 class WssResDecoder {
     companion object{
+        val pingResRegex = Regex("\\{\"ping\":[0-9]*\\}")
 
         fun byteBufferToString(buffer: ByteBuffer): String? {
             val charBuffer: CharBuffer
@@ -41,6 +38,16 @@ class WssResDecoder {
                 out.write(buffer, 0, n)
             }
             return out.toString()
+        }
+
+        fun webSocketMessageEventToString(wse:WebSocket.Event.OnMessageReceived) : String? {
+            val x = ByteBuffer.wrap((wse.message as Message.Bytes).component1())
+            val y = WssResDecoder.byteBufferToString(x)
+            return uncompress(y)
+        }
+
+        fun isPingResponse(str:String) : Boolean {
+            return pingResRegex.matches(str as CharSequence)
         }
     }
 }

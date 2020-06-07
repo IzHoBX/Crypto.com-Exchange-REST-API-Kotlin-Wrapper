@@ -9,7 +9,6 @@ import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
 import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
 import okhttp3.OkHttpClient
-import java.nio.ByteBuffer
 
 class CryptoComX {
 
@@ -59,19 +58,16 @@ class CryptoComX {
 
             service.observeWebSocketEvent()
                 .filter { it is WebSocket.Event.OnConnectionOpened<*> }
-                .subscribe({
+                .subscribe {
                     service.sendSubscribe(SUBSCRIBE_MESSAGE)
-                })
+                }
 
             service.observeWebSocketEvent()
                 .filter { it is WebSocket.Event.OnMessageReceived  }
                 .subscribe { res ->
-                    val x = ByteBuffer.wrap(((res  as WebSocket.Event.OnMessageReceived).message as Message.Bytes).component1())
-                    val y = WssResDecoder.byteBufferToString(x)
-                    val z = WssResDecoder.uncompress(y)
-                    val r = Regex("\\{\"ping\":[0-9]*\\}")
-                    if(!r.matches(z as CharSequence))
-                        lmbd(jsonStringToObject(WssSubNewTickerResponse::class.java, z))
+                    val str = WssResDecoder.webSocketMessageEventToString(res as WebSocket.Event.OnMessageReceived)
+                    if(str!= null && !WssResDecoder.isPingResponse(str))
+                        lmbd(jsonStringToObject(WssSubNewTickerResponse::class.java, str))
                 }
         }
 
