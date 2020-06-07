@@ -31,4 +31,8 @@ fun stringToCoinSymbol(str:String) : CoinSymbol{
     return x
 }
 
-data class TradePair(val countCoin:CoinSymbol, val baseCoin:CoinSymbol)
+data class TradePair(val countCoin:CoinSymbol, val baseCoin:CoinSymbol) {
+    override fun toString(): String {
+        return countCoin.str + baseCoin.str
+    }
+}

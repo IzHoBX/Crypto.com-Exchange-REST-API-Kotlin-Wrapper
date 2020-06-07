@@ -1,9 +1,15 @@
 import Exceptions.CryptoComServerResException
 import Models.MoshiAdapters
-import com.squareup.moshi.JsonAdapter
+import Models.TradePair
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.internal.Util
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.tinder.scarlet.Message
+import com.tinder.scarlet.Scarlet
+import com.tinder.scarlet.WebSocket
+import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
+import com.tinder.scarlet.websocket.okhttp.newWebSocketFactory
+import okhttp3.OkHttpClient
+import java.nio.ByteBuffer
 
 class CryptoComX {
 
@@ -11,6 +17,12 @@ class CryptoComX {
         val moshi = Moshi.Builder()
             .add(MoshiAdapters())
             .add(KotlinJsonAdapterFactory())
+            .build()
+
+        val scarletInstance = Scarlet.Builder()
+            .webSocketFactory(OkHttpClient().newWebSocketFactory(StringConstants.WS_ENDPOINT))
+            .addMessageAdapterFactory(com.tinder.scarlet.messageadapter.moshi.MoshiMessageAdapter.Factory(moshi))
+            .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
             .build()
 
         fun getAllMarket() : GetAllMarketRes{
@@ -35,6 +47,32 @@ class CryptoComX {
         fun getAllBalances() : GetAllBalanceRes {
             val resFromServer = HTTPHelper.postHttpSigned(StringConstants.GETALLBALANCE_ENDPOINT)
             return jsonStringToObject(GetAllBalanceRes::class.java, resFromServer)
+        }
+
+        fun subLatestTicker(pair: TradePair, lmbd: (WssSubNewTickerResponse) -> Unit) {
+            val service = scarletInstance.create<SubNewTickerService>()
+
+            val SUBSCRIBE_MESSAGE = SubNewTickerService.Subscribe(
+                "sub",
+                SubNewTickerService.Params("market_" + pair.toString() + "_ticker")
+            )
+
+            service.observeWebSocketEvent()
+                .filter { it is WebSocket.Event.OnConnectionOpened<*> }
+                .subscribe({
+                    service.sendSubscribe(SUBSCRIBE_MESSAGE)
+                })
+
+            service.observeWebSocketEvent()
+                .filter { it is WebSocket.Event.OnMessageReceived  }
+                .subscribe { res ->
+                    val x = ByteBuffer.wrap(((res  as WebSocket.Event.OnMessageReceived).message as Message.Bytes).component1())
+                    val y = WssResDecoder.byteBufferToString(x)
+                    val z = WssResDecoder.uncompress(y)
+                    val r = Regex("\\{\"ping\":[0-9]*\\}")
+                    if(!r.matches(z as CharSequence))
+                        lmbd(jsonStringToObject(WssSubNewTickerResponse::class.java, z))
+                }
         }
 
         fun setApiKey(s:String) {
