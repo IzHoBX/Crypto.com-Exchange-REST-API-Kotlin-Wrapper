@@ -51,7 +51,7 @@ class CryptoComX {
             return jsonStringToObject(GetTickerForSingleMarketRes::class.java, resFromServer)
         }
 
-        fun <T> jsonStringToObject(className: Class<T>, dataString:String?): T {
+        private fun <T> jsonStringToObject(className: Class<T>, dataString:String?): T {
             if (dataString != null) {
                 val toReturn = moshi.adapter(className).fromJson(dataString)
                 if (toReturn== null) {
