@@ -1,6 +1,5 @@
 import Models.CoinSymbol
 import Models.TradePair
-import java.util.*
 
 open class Res(
         val code: Int,
@@ -96,4 +95,31 @@ data class WssSubNewTickerResponse (
             val rose:Float,
             val vol:Float
     )
+}
+
+class GetKLineOverPeriodRes (
+        code:Int,
+        msg:String,
+        val data:List<Ticker>
+) : Res(code, msg) {
+    data class Ticker (
+            val time:Long,
+            val open:Float,
+            val high:Float,
+            val low:Float,
+            val close:Float,
+            val vol:Float
+    ) {
+        fun asListOfString() : List<String> {
+            return mutableListOf(this.time.toString(), this.open.toString(), this.high.toString(), this.low.toString(), this.close.toString(), this.vol.toString())
+        }
+    }
+
+    override fun toString(): String {
+        var s = ""
+        data.forEach {
+            s += it.asListOfString().toString() + "\n"
+        }
+        return s
+    }
 }

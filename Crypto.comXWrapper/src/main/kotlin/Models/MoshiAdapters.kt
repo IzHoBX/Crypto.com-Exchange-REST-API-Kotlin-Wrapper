@@ -45,5 +45,15 @@ class MoshiAdapters {
         return p.inMin.toString()
     }
 
+    @FromJson
+    fun klineTickerFromJson(l:List<Float>) : GetKLineOverPeriodRes.Ticker {
+        return GetKLineOverPeriodRes.Ticker(l[0].toLong(), l[1], l[2], l[3], l[4], l[5])
+    }
+
+    @ToJson
+    fun klineTickerToJson(t:GetKLineOverPeriodRes.Ticker) : List<String> {
+        return t.asListOfString()
+    }
+
 }
 

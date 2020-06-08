@@ -1,5 +1,6 @@
 import Exceptions.CryptoComServerResException
 import Models.MoshiAdapters
+import Models.Period
 import Models.TradePair
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -49,6 +50,11 @@ class CryptoComX {
         fun getTickerForMarket(tradePair: TradePair): GetTickerForSingleMarketRes {
             val resFromServer = HTTPHelper.getHttp(StringConstants.GETTICKER_ENDPOINT, mapOf("symbol" to tradePair.toString()))
             return jsonStringToObject(GetTickerForSingleMarketRes::class.java, resFromServer)
+        }
+
+        fun getKline(tradePair: TradePair, period: Period) : GetKLineOverPeriodRes{
+            val resFromServer = HTTPHelper.getHttp(StringConstants.GETKLINE_ENDPOINT, mapOf("symbol" to tradePair.toString(), "period" to period.inMin.toString()))
+            return jsonStringToObject(GetKLineOverPeriodRes::class.java, resFromServer)
         }
 
         private fun <T> jsonStringToObject(className: Class<T>, dataString:String?): T {
