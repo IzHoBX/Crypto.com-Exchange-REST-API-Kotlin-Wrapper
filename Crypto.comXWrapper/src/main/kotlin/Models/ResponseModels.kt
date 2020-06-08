@@ -11,55 +11,73 @@ class GetAllMarketRes(
         code:Int,
         msg:String,
         val data:List<MarketInfo>
-): Res(code, msg)
+): Res(code, msg) {
+    data class MarketInfo (
+            val symbol:TradePair,
+            val count_coin:CoinSymbol,
+            val amount_precision:Int,
+            val base_coin:CoinSymbol,
+            val price_precision:Int
+    )
+}
 
 class GetAllBalanceRes (
         code:Int,
         msg:String,
         val data:TotalBalance
-):Res(code, msg)
+):Res(code, msg) {
+    data class TotalBalance (
+            val total_asset:Float,
+            val coin_list: List<CoinBalance>
+    )
+
+    data class CoinBalance (
+            val normal: Float,
+            val locked: Float,
+            val btcValuation: Float?,
+            val coin: CoinSymbol
+    )
+}
 
 class GetTickerForAllMarketRes (
         code: Int,
         msg:String,
         val data:DateAndTicker
-):Res(code, msg)
+):Res(code, msg) {
+    data class DateAndTicker (
+            val date:Long,
+            val ticker:List<Ticker>
+    )
 
-data class DateAndTicker (
-        val date:Long,
-        val ticker:List<InProgressTicker>
-)
+    data class Ticker (
+            val symbol: TradePair,
+            val high:Float?=null,
+            val vol:Float?=null,
+            val last:Float?=null,
+            val low:Float?=null,
+            val buy:Float?=null,
+            val sell:Float?=null,
+            val change:Float?=null,
+            val rose:Float?=null
+    )
+}
 
-data class InProgressTicker (
-        val symbol: TradePair,
-        val high:Float?=null,
-        val vol:Float?=null,
-        val last:Float?=null,
-        val low:Float?=null,
-        val buy:Float?=null,
-        val sell:Float?=null,
-        val change:Float?=null,
-        val rose:Float?=null
-)
-data class TotalBalance (
-        val total_asset:Float,
-        val coin_list: List<CoinBalance>
-)
-
-data class CoinBalance (
-        val normal: Float,
-        val locked: Float,
-        val btcValuation: Float?,
-        val coin: CoinSymbol
-)
-
-data class MarketInfo (
-        val symbol:TradePair,
-        val count_coin:CoinSymbol,
-        val amount_precision:Int,
-        val base_coin:CoinSymbol,
-        val price_precision:Int
-)
+class GetTickerForSingleMarketRes (
+    code:Int,
+    msg:String,
+    val data:Ticker
+):Res(code, msg) {
+    data class Ticker (
+            val high:Float?=null,
+            val vol:Float?=null,
+            val last:Float?=null,
+            val low:Float?=null,
+            val buy:Float?=null,
+            val sell:Float?=null,
+            val rose:Float?=null,
+            val time:Long
+    )
+}
 
 data class WssSubNewTickerResponse (
         val event_rep:String,
@@ -68,14 +86,14 @@ data class WssSubNewTickerResponse (
         val tick : Ticker,
         val ts:Long,
         val status:String
-)
-
-data class Ticker (
-        val amount:Float,
-        val close:Float,
-        val high:Float,
-        val low:Float,
-        val open:Float,
-        val rose:Float,
-        val vol:Float
-)
+) {
+    data class Ticker (
+            val amount:Float,
+            val close:Float,
+            val high:Float,
+            val low:Float,
+            val open:Float,
+            val rose:Float,
+            val vol:Float
+    )
+}
