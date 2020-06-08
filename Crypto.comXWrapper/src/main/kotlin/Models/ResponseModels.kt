@@ -1,5 +1,6 @@
 import Models.CoinSymbol
 import Models.TradePair
+import Models.TradeType
 
 open class Res(
         val code: Int,
@@ -122,4 +123,18 @@ class GetKLineOverPeriodRes (
         }
         return s
     }
+}
+
+class GetLastTradeRes (
+        code:Int,
+        msg:String,
+        val data:List<Trade>
+) : Res(code, msg) {
+    data class Trade (
+            val amount:Float,
+            val price:Float,
+            val ctime:Float,
+            val id:Int,
+            val type: TradeType
+    )
 }

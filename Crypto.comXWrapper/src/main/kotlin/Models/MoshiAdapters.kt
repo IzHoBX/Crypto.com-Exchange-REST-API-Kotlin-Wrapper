@@ -55,5 +55,11 @@ class MoshiAdapters {
         return t.asListOfString()
     }
 
+    @FromJson
+    fun tradeTypeFromJson(s:String) : TradeType = stringToTradeType(s)
+
+    @ToJson
+    fun tradeTypeToJson(t:TradeType) : String = t.str
+
 }
 

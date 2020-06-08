@@ -2,6 +2,7 @@ import Exceptions.CryptoComServerResException
 import Models.MoshiAdapters
 import Models.Period
 import Models.TradePair
+import MoshiHelper.Companion.jsonStringToObject
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.tinder.scarlet.Scarlet
@@ -13,14 +14,10 @@ import okhttp3.OkHttpClient
 class CryptoComX {
 
     companion object {
-        private val moshi = Moshi.Builder()
-            .add(MoshiAdapters())
-            .add(KotlinJsonAdapterFactory())
-            .build()
 
         private val scarletInstance = Scarlet.Builder()
             .webSocketFactory(OkHttpClient().newWebSocketFactory(StringConstants.WS_ENDPOINT))
-            .addMessageAdapterFactory(com.tinder.scarlet.messageadapter.moshi.MoshiMessageAdapter.Factory(moshi))
+            .addMessageAdapterFactory(com.tinder.scarlet.messageadapter.moshi.MoshiMessageAdapter.Factory(MoshiHelper.getInstance()))
             .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
             .build()
 
@@ -57,17 +54,9 @@ class CryptoComX {
             return jsonStringToObject(GetKLineOverPeriodRes::class.java, resFromServer)
         }
 
-        private fun <T> jsonStringToObject(className: Class<T>, dataString:String?): T {
-            if (dataString != null) {
-                val toReturn = moshi.adapter(className).fromJson(dataString)
-                if (toReturn== null) {
-                    throw CryptoComServerResException()
-                } else {
-                    return toReturn
-                }
-            } else {
-                throw CryptoComServerResException()
-            }
+        fun getLastTrades(tradePair: TradePair) : GetLastTradeRes {
+            val resFromServer = HTTPHelper.getHttp(StringConstants.GETLAST200_ENDPOINT, mapOf("symbol" to tradePair.toString()))
+            return jsonStringToObject(GetLastTradeRes::class.java, resFromServer)
         }
 
         fun subLatestTicker(pair: TradePair, lmbd: (WssSubNewTickerResponse) -> Unit) {

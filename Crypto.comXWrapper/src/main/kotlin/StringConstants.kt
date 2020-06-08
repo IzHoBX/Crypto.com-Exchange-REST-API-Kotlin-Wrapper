@@ -7,6 +7,7 @@ class StringConstants {
         val GETALLBALANCE_ENDPOINT = "/v1/account"
         val GETTICKER_ENDPOINT = "/v1/ticker"
         val GETKLINE_ENDPOINT = "/v1/klines"
+        val GETLAST200_ENDPOINT = "/v1/trades"
     }
 
 }

@@ -34,6 +34,20 @@ enum class Period(val inMin:Int) {
     MONTH(43200)
 }
 
+enum class TradeType(val str:String) {
+    SELL("sell"),
+    BUY("buy")
+}
+
+fun stringToTradeType(str:String) : TradeType{
+    var str = str.toLowerCase()
+    val x = TradeType.values().find { it.str == str }
+    if (x==null) {
+        throw CoinSymbolNotFoundException(str)
+    }
+    return x
+}
+
 fun stringToCoinSymbol(str:String) : CoinSymbol{
     var str = str.toLowerCase()
     val x = CoinSymbol.values().find { it.str == str }
