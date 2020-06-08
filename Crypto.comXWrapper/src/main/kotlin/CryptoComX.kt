@@ -1,6 +1,7 @@
 import Exceptions.CryptoComServerResException
 import Models.MoshiAdapters
 import Models.TradePair
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.tinder.scarlet.Message
@@ -29,6 +30,24 @@ class CryptoComX {
             return jsonStringToObject(GetAllMarketRes::class.java, resFromServer)
         }
 
+        fun getAllBalances() : GetAllBalanceRes {
+            val resFromServer = HTTPHelper.postHttpSigned(StringConstants.GETALLBALANCE_ENDPOINT)
+            return jsonStringToObject(GetAllBalanceRes::class.java, resFromServer)
+        }
+
+        fun setApiKey(s:String) {
+            HTTPHelper.cryptoManager.apiKey = s
+        }
+
+        fun setApiSecret(s:String) {
+            HTTPHelper.cryptoManager.apiSecret = s
+        }
+
+        fun getTickersForAllMarkets() : GetTickerForAllMarketRes{
+            val resFromServer = HTTPHelper.getHttp(StringConstants.GETTICKERALLMARKETS_ENDPOINT)
+            return jsonStringToObject(GetTickerForAllMarketRes::class.java, resFromServer)
+        }
+
         fun <T> jsonStringToObject(className: Class<T>, dataString:String?): T {
             if (dataString != null) {
                 val toReturn = moshi.adapter(className).fromJson(dataString)
@@ -40,12 +59,6 @@ class CryptoComX {
             } else {
                 throw CryptoComServerResException()
             }
-        }
-
-
-        fun getAllBalances() : GetAllBalanceRes {
-            val resFromServer = HTTPHelper.postHttpSigned(StringConstants.GETALLBALANCE_ENDPOINT)
-            return jsonStringToObject(GetAllBalanceRes::class.java, resFromServer)
         }
 
         fun subLatestTicker(pair: TradePair, lmbd: (WssSubNewTickerResponse) -> Unit) {
@@ -69,14 +82,6 @@ class CryptoComX {
                     if(str!= null && !WssResDecoder.isPingResponse(str))
                         lmbd(jsonStringToObject(WssSubNewTickerResponse::class.java, str))
                 }
-        }
-
-        fun setApiKey(s:String) {
-            HTTPHelper.cryptoManager.apiKey = s
-        }
-
-        fun setApiSecret(s:String) {
-            HTTPHelper.cryptoManager.apiSecret = s
         }
     }
 }

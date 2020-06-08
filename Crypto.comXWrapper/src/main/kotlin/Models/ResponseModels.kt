@@ -1,18 +1,46 @@
 import Models.CoinSymbol
 import Models.TradePair
+import java.util.*
 
-data class GetAllMarketRes(
-        val code:Int,
-        val msg:String,
-        val data:List<MarketRes>
+open class Res(
+        val code: Int,
+        val msg:String
 )
 
-data class GetAllBalanceRes (
-        val code:Int,
-        val msg:String,
+class GetAllMarketRes(
+        code:Int,
+        msg:String,
+        val data:List<MarketInfo>
+): Res(code, msg)
+
+class GetAllBalanceRes (
+        code:Int,
+        msg:String,
         val data:TotalBalance
+):Res(code, msg)
+
+class GetTickerForAllMarketRes (
+        code: Int,
+        msg:String,
+        val data:DateAndTicker
+):Res(code, msg)
+
+data class DateAndTicker (
+        val date:Long,
+        val ticker:List<InProgressTicker>
 )
 
+data class InProgressTicker (
+        val symbol: TradePair,
+        val high:Float?=null,
+        val vol:Float?=null,
+        val last:Float?=null,
+        val low:Float?=null,
+        val buy:Float?=null,
+        val sell:Float?=null,
+        val change:Float?=null,
+        val rose:Float?=null
+)
 data class TotalBalance (
         val total_asset:Float,
         val coin_list: List<CoinBalance>
@@ -25,7 +53,7 @@ data class CoinBalance (
         val coin: CoinSymbol
 )
 
-data class MarketRes (
+data class MarketInfo (
         val symbol:TradePair,
         val count_coin:CoinSymbol,
         val amount_precision:Int,
