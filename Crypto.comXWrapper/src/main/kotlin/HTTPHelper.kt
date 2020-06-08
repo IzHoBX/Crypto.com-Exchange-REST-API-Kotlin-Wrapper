@@ -40,6 +40,11 @@ class HTTPHelper {
             return toReturn
         }
 
+        fun getHttp(endPoint:String,params:Map<String, String>) : String? {
+            return getHttp(endPoint+"?"+ params.mapToUrlEcondingString())
+        }
+
+
         fun postHttpSigned(endPoint: String, params:Map<String, String> = TreeMap<String, String>()) : String? {
             val url = URL(StringConstants.HTTP_ENDPOINT + endPoint)
             val con: HttpURLConnection = url.openConnection() as HttpURLConnection
