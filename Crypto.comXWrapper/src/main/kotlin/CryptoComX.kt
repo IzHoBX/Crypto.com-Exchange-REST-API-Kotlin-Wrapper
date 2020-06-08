@@ -1,10 +1,8 @@
 import Exceptions.CryptoComServerResException
 import Models.MoshiAdapters
 import Models.TradePair
-import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.tinder.scarlet.Message
 import com.tinder.scarlet.Scarlet
 import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.streamadapter.rxjava2.RxJava2StreamAdapterFactory
@@ -44,8 +42,13 @@ class CryptoComX {
         }
 
         fun getTickersForAllMarkets() : GetTickerForAllMarketRes{
-            val resFromServer = HTTPHelper.getHttp(StringConstants.GETTICKERALLMARKETS_ENDPOINT)
+            val resFromServer = HTTPHelper.getHttp(StringConstants.GETTICKER_ENDPOINT)
             return jsonStringToObject(GetTickerForAllMarketRes::class.java, resFromServer)
+        }
+
+        fun getTickerForMarket(tradePair: TradePair): GetTickerForSingleMarketRes {
+            val resFromServer = HTTPHelper.getHttp(StringConstants.GETTICKER_ENDPOINT, mapOf("symbol" to tradePair.toString()))
+            return jsonStringToObject(GetTickerForSingleMarketRes::class.java, resFromServer)
         }
 
         fun <T> jsonStringToObject(className: Class<T>, dataString:String?): T {
