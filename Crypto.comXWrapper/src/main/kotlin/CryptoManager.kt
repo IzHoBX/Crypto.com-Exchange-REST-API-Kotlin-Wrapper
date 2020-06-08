@@ -15,11 +15,11 @@ class CryptoManager {
         val unixTime = System.currentTimeMillis()
         params["api_key"] = apiKey
         params["time"] = unixTime.toString()
-        var paramstr = mapToStringNoDelimiter(params)
+        var paramstr = params.mapToStringNoDelimiter()
         paramstr += apiSecret
         val digest = getDigest(paramstr)
         params["sign"] = digest
-        paramstr = mapToUrlEcondingString(params)
+        paramstr = params.mapToUrlEcondingString()
         return paramstr
     }
 
@@ -37,23 +37,5 @@ class CryptoManager {
             hexString.append(hex)
         }
         return hexString.toString()
-    }
-
-    fun mapToUrlEcondingString(m: Map<String, String>) : String {
-        var paramstr = ""
-        m.forEach {
-                k, v ->
-            paramstr += k + "=" + v + "&"
-        }
-        return paramstr.subSequence(0, paramstr.length-1) as String
-    }
-
-    fun mapToStringNoDelimiter(m: Map<String, String>) : String{
-        var paramstr = ""
-        m.forEach {
-                k, v ->
-            paramstr += k + v
-        }
-        return paramstr
     }
 }

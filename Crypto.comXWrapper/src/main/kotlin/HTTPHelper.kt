@@ -5,6 +5,24 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
+fun Map<String, String>.mapToUrlEcondingString() : String {
+    var paramstr = ""
+    this.forEach {
+        k, v ->
+        paramstr += k + "=" + v + "&"
+    }
+    return paramstr.subSequence(0, paramstr.length-1) as String
+}
+
+fun Map<String, String>.mapToStringNoDelimiter() : String{
+    var paramstr = ""
+    this.forEach {
+        k, v ->
+        paramstr += k + v
+    }
+    return paramstr
+}
+
 class HTTPHelper {
 
     companion object {
