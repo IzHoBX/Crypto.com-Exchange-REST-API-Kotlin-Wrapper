@@ -110,19 +110,7 @@ class GetKLineOverPeriodRes (
             val low:Float,
             val close:Float,
             val vol:Float
-    ) {
-        fun asListOfString() : List<String> {
-            return mutableListOf(this.time.toString(), this.open.toString(), this.high.toString(), this.low.toString(), this.close.toString(), this.vol.toString())
-        }
-    }
-
-    override fun toString(): String {
-        var s = ""
-        data.forEach {
-            s += it.asListOfString().toString() + "\n"
-        }
-        return s
-    }
+    )
 }
 
 class GetLastTradeRes (
