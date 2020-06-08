@@ -12,12 +12,12 @@ import okhttp3.OkHttpClient
 class CryptoComX {
 
     companion object {
-        val moshi = Moshi.Builder()
+        private val moshi = Moshi.Builder()
             .add(MoshiAdapters())
             .add(KotlinJsonAdapterFactory())
             .build()
 
-        val scarletInstance = Scarlet.Builder()
+        private val scarletInstance = Scarlet.Builder()
             .webSocketFactory(OkHttpClient().newWebSocketFactory(StringConstants.WS_ENDPOINT))
             .addMessageAdapterFactory(com.tinder.scarlet.messageadapter.moshi.MoshiMessageAdapter.Factory(moshi))
             .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
