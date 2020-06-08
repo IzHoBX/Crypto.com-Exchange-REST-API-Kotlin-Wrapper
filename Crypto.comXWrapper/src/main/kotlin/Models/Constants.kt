@@ -1,6 +1,7 @@
 package Models
 
 import Exceptions.CoinSymbolNotFoundException
+import Exceptions.PeriodNotFoundException
 
 enum class CoinSymbol(val str:String) {
     CRO("cro"),
@@ -22,11 +23,30 @@ enum class CoinSymbol(val str:String) {
     ADA("ada")
 }
 
+enum class Period(val inMin:Int) {
+    MIN1(1),
+    MIN5(5),
+    MIN15(15),
+    MIN30(30),
+    HOUR(60),
+    DAY(1440),
+    WEEK(10080),
+    MONTH(43200)
+}
+
 fun stringToCoinSymbol(str:String) : CoinSymbol{
     var str = str.toLowerCase()
     val x = CoinSymbol.values().find { it.str == str }
     if (x==null) {
         throw CoinSymbolNotFoundException(str)
+    }
+    return x
+}
+
+fun intToPeriod(i:Int) : Period {
+    val x = Period.values().find {it.inMin == i}
+    if (x==null) {
+        throw PeriodNotFoundException(i)
     }
     return x
 }

@@ -35,5 +35,15 @@ class MoshiAdapters {
         return TradePair(cs1, stringToCoinSymbol(str.substring(3)))
     }
 
+    @FromJson
+    fun periodFromJson(str:String) : Period {
+        return intToPeriod(str.toInt())
+    }
+
+    @ToJson
+    fun periodToJson(p:Period) : String {
+        return p.inMin.toString()
+    }
+
 }
 
